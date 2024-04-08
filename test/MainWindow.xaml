@@ -1,0 +1,11 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:CytologyMacro_V2Pages="clr-namespace:CytologyMacro_V2Pages;assembly=CytologyMacro_V2" x:Class="test.MainWindow"
+        Title="MainWindow" Height="629.104" Width="1462.836">
+    <Grid Margin="0,0,167,0">
+
+        <CytologyMacro_V2Pages:MasterPage x:Name="op" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="1270" Height="550"/>
+
+    </Grid>
+</Window>

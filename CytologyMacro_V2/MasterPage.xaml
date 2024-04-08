@@ -1,0 +1,531 @@
+﻿<UserControl 
+             x:Class="CytologyMacro_V2Pages.MasterPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:cytologyMacroV2Pages="clr-namespace:CytologyMacro_V2Pages" d:DataContext="{d:DesignInstance Type=cytologyMacroV2Pages:CytoDetails}"
+    mc:Ignorable="d"  FlowDirection="RightToLeft"
+
+
+
+    x:Name="Control" Width="900"
+    >
+
+
+    <UserControl.Resources>
+
+
+        <Style TargetType="{x:Type xctk:IntegerUpDown}">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="3"/>
+            <!--<Setter Property="Minimum" Value="0"/>-->
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+
+            <Setter Property="Width" Value="64"/>
+
+
+        </Style>
+
+        <Style TargetType="{x:Type ComboBox}" x:Key="cbInner">
+            <Setter Property="IsEditable" Value="False"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="IsSynchronizedWithCurrentItem" Value="False"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="MinWidth" Value="200"/>
+            <Setter Property="Width" Value="200"/>
+
+
+        </Style>
+        <Style TargetType="{x:Type TextBlock}" x:Key="intb">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="Width" Value="Auto"/>
+
+        </Style>
+
+        <Style x:Key="SidePanelBorder">
+            <Setter Property="Control.BorderBrush" Value="#FF363636" />
+            <Setter Property="Control.BorderThickness" Value="1" />
+        </Style>
+        <Style x:Key="SidePanelBorderInner">
+            <Setter Property="Control.BorderBrush" Value="DarkRed" />
+            <Setter Property="Control.BorderThickness" Value="1" />
+        </Style>
+
+        <Style TargetType="{x:Type CheckBox}">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="IsThreeState" Value="False"/>
+            <Setter Property="FontSize" Value="22"/>
+        </Style>
+        <Style TargetType="{x:Type Label}">
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+        <Style TargetType="{x:Type ComboBox}">
+            <Setter Property="IsEditable" Value="True"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="IsSynchronizedWithCurrentItem" Value="False"/>
+
+        </Style>
+        <Style TargetType="{x:Type xctk:DateTimePicker}">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="Format" Value="ShortDate"/>
+
+        </Style>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+        <Style TargetType="{x:Type DatePicker}">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+        <Style TargetType="{x:Type DataGrid}">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+        <Style TargetType="{x:Type RadioButton}">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="IsThreeState" Value="False"/>
+        </Style>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+        <Style TargetType="{x:Type Grid}" x:Key="innerGrid">
+            <Setter Property="Background" Value="Lavender"/>
+            <Setter Property="Margin" Value="4"/>
+        </Style>
+        <Style   TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="6"/>
+            <Setter Property="MaxWidth" Value="156"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+
+        </Style>
+
+        <Style TargetType="{x:Type Grid}" >
+            <Setter Property="Background" Value="Lavender"/>
+            <Setter Property="Margin" Value="6"/>
+        </Style>
+
+    </UserControl.Resources>
+    <UserControl.Background>
+        <ImageBrush/>
+    </UserControl.Background>
+
+    <Grid x:Name="MasterGrid" ShowGridLines="False" MinHeight="568" MinWidth="700" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="34"/>
+            <RowDefinition />
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Background="AliceBlue" Margin="0"  FlowDirection="RightToLeft" x:Name="screenHeader" Height="35">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition  Width="40" />
+                <ColumnDefinition/>
+                <ColumnDefinition  Width="40"/>
+                <ColumnDefinition  Width="auto"/>
+                <ColumnDefinition  Width="40"/>
+                <ColumnDefinition  Width="auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <!--exit btn-->
+            <Border BorderBrush="Gray" BorderThickness="0,0,1,0" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN">
+                <Grid x:Name="exitBtn" Grid.Column="0" Background="#FFF0F8FF" ToolTip="יציאה" MouseLeftButtonDown="HeaderBtnsClick" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN">
+                    <Grid>
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FFDA3333"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                    </Grid>
+                    <Label Content="❌"/>
+                </Grid>
+            </Border>
+
+
+
+            <!--template loading btn-->
+            <Border BorderBrush="Gray" BorderThickness="1,0,1,0" Grid.Column="2">
+                <Grid x:Name="templateLoadingBtn"   Background="#FFF0F8FF" ToolTip="טעינת טמפלייט" MouseLeftButtonDown="HeaderBtnsClick" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN">
+                    <Grid>
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FFA1C3F1"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Label Content=" 🀄 "  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0" Width="NaN" />
+                    </Grid>
+                </Grid>
+            </Border>
+            <!--save btn-->
+            <Border Grid.Column="3">
+                <Grid x:Name="saveBtn"   Background="#FFF0F8FF" MouseLeftButtonDown="HeaderBtnsClick" ToolTip="שמירה" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN" >
+                    <Grid HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FFA1C3F1"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Label Content="Ctrl S" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0" Width="NaN"/>
+                    </Grid>
+                </Grid>
+            </Border>
+
+
+            <!--authorize btn-->
+            <Border BorderBrush="Gray" BorderThickness="1,0,1,0" Grid.Column="4">
+                <Grid x:Name="authorizeBtn" Background="#FFF0F8FF" MouseLeftButtonDown="HeaderBtnsClick" ToolTip="אישור" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN"  >
+                    <Grid HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FF33DA5B"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Label  Content="✔ "  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0" Width="NaN"/>
+                    </Grid>
+                </Grid>
+            </Border>
+            <!--screen header lbl-->
+            <Label  Grid.Column="5" Content="מאקרו ציטולוגיה" FontFamily="Arial Rounded MT Bold" FontSize="20" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN"/>
+
+
+        </Grid>
+
+
+        <!-- First Line -->
+        <Label Grid.Row="1" HorizontalAlignment="Left" Margin="3,0,3,0" FontFamily="Arial Rounded MT Bold" x:Name ="lbl_sdgName" VerticalAlignment="Stretch" Width="200" Height="30" />
+
+
+        <!-- Second Line -->
+        <Grid Grid.RowSpan="3"  HorizontalAlignment="Right" Background="{x:Null}" Height="65" Margin="0,40,0,0" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+
+            <Label Grid.Column="0" Grid.Row="0" Content="דרישה:" FontFamily="Arial Rounded MT Bold" FontSize="15" />
+            <TextBox Grid.Column="1"  Grid.Row="0"  Height="25" Width="140" x:Name="txtInternalNbr" FontSize="16" KeyDown="TxtInternalNbr_OnKeyDown" FlowDirection="LeftToRight"/>
+
+            <Label Grid.Column="0"  Grid.Row="1" Content="צנצנת:"   FontFamily="Arial Rounded MT Bold" FontSize="15"  />
+            <TextBox Grid.Column="1" Grid.Row="1" Height="25" Width="140" x:Name="txtInternalSamp" FontSize="16" KeyDown="TxtInternalNbr_OnKeyDown" FlowDirection="LeftToRight" />
+
+            <!--<StackPanel Grid.Row="2" Grid.ColumnSpan="2"  Width="auto" x:Name="ImgGrid" Visibility="Collapsed"/>-->
+
+
+        </Grid>
+
+
+        <!-- Third Line -->
+
+        <Grid x:Name="CytoMainGrid" Grid.Row="3" Grid.RowSpan="9" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN" Background="Transparent" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="1.5*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Margin="20,0,20,2" Style="{StaticResource intb}" Text="תאריך הפנייה" Height="27" FontWeight="Bold" FontSize="17" FontFamily="Arial Rounded MT Bold" HorizontalAlignment="Center"/>
+            <xctk:DateTimePicker x:Name="dtRequestDate" FontSize="20" Width="150" AllowTextInput="False" Grid.Column="1" Format="ShortDate" ValueChanged="DtRequestDate_OnValueChanged" Height="25" Margin="3,0,3,0"/>
+
+            <StackPanel  Grid.Column="10" Orientation="Horizontal" Grid.ColumnSpan="2">
+                <TextBlock Style="{StaticResource intb}" Text="פתולוג משויך" Height="27" FontSize="17" FontFamily="Arial Rounded MT Bold" Width="111"/>
+                <ComboBox x:Name="cmpPatholog" Height="25" Width="180" />
+            </StackPanel>
+
+            <Label x:Name="lbdt" Grid.Column="5" FontSize="17" Foreground="Red" Height="10" Margin="3,0,3,0" Grid.ColumnSpan="2"/>
+
+            <StackPanel Grid.Row="0" Grid.Column="9" Orientation="Horizontal" Margin="140,0,19,0">
+                <TextBlock Style="{StaticResource intb}" Text="מס צנצנות" Height="27" FontSize="17" FontFamily="Arial Rounded MT Bold"/>
+                <xctk:IntegerUpDown x:Name="numSamplesdd" FontSize="20" ValueChanged="NumSamplesdd_OnValueChanged" Minimum="1" Maximum="20" Height="25"/>
+            </StackPanel>
+            <ListBox   Grid.Row="2" Grid.ColumnSpan="11" x:Name="lb" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding SampleDetails}" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Margin="20,0,20,2">
+
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
+
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+
+
+                        <Border BorderThickness="1"  BorderBrush="#FFB8B8E0">
+                            <Grid x:Name="dtgrid" Height="105">
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="3*"/>
+                                    <ColumnDefinition  Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+
+                                <Grid x:Name="mg" Grid.Row="0" Grid.Column="0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition  Width="1*"/>
+                                        <ColumnDefinition  Width="1*"/>
+                                        <ColumnDefinition  Width="1*"/>
+                                        <ColumnDefinition  Width="1*"/>
+                                        <ColumnDefinition  Width="1*"/>
+                                        <ColumnDefinition  Width="1*"/>
+                                        <ColumnDefinition  Width="1*"/>
+                                        <ColumnDefinition  Width="1*"/>
+                                        <ColumnDefinition  Width="1*"/>
+                                        <ColumnDefinition  Width="1*"/>
+                                        <ColumnDefinition  Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Text="מסומנת כ-" Style="{StaticResource intb}" />
+                                    <TextBox  x:Name="txtMarkAs"  Grid.Column="1" Text="{Binding MarkAs}" Width="100" />
+
+                                    <TextBlock Text="מס אסותא"  Grid.Column="2"  Style="{StaticResource intb}" />
+                                    <TextBox  x:Name="txtAstNum" Grid.Column="3" Text="{Binding AssutaNbr}" Width="120" />
+
+
+                                    <TextBlock Text="הגיע" Grid.Column="4" Style="{StaticResource intb}" />
+
+                                    <ComboBox Width="100" Style="{StaticResource cbInner}" x:Name="cmbCytoSlideType" Tag="U_NEXT_STEP"
+                                              SelectionChanged="CmbCytoSlideType_OnSelectionChanged"  
+                                              Grid.Column="5" SelectedValue="{Binding CytoSlideType}" SelectedValuePath="PHRASE_NAME"  
+                                              DisplayMemberPath="PHRASE_DESCRIPTION" ItemsSource="{Binding ListCytoSlideType, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"/>
+
+
+                                    <TextBlock Text="איבר" Grid.Column="6" Style="{StaticResource intb}" />
+
+                                    <ComboBox x:Name="cmbOrgans" Style="{StaticResource cbInner}" Grid.Column="7" 
+                               SelectedValue="{Binding Organ}" 
+                                       DisplayMemberPath="U_ORGAN_HEBREW_NAME" SelectedValuePath="U_ORGAN_HEBREW_NAME" 
+                                       ItemsSource="{Binding ListOrgans, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"/>
+
+
+                                    <!-- סוף נוזל בצנצנת-->
+                                    <TextBlock  Text="מס סליידים"   Grid.Column="8" Style="{StaticResource intb}" />
+                                    <xctk:IntegerUpDown                                                    
+                                                  ValueChanged="NumOfSlidesChanged" 
+                                                  x:Name="blocksNum" 
+                                                  Grid.Column="9"
+                                                  Minimum="{Binding NumOfBlocksOnLoading}" Maximum="99"
+                                                  Value="{Binding NumOfBlocksOnLoading}"/>
+
+
+
+                                    <CheckBox 
+                                
+                                    IsChecked="{Binding CellBlock}" 
+                                          
+                                          Visibility="Collapsed" 
+                                          Grid.Column="10" 
+                                          x:Name="chkIsCellBlock"
+                                          Checked="ChkIsCellBlock_OnChecked" 
+                                          Unchecked="ChkIsCellBlock_OnUnchecked" Content="Cell Block">
+
+                                        <CheckBox.Style>
+
+                                            <Style TargetType="{x:Type CheckBox}">
+                                                <Setter Property="IsEnabled" Value="True" />
+                                                <Setter Property="FontSize" Value="17" />
+                                                <Setter Property="Margin" Value="0,0,5,0" />
+                                                <Setter Property="Padding" Value="5" />
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                                <Setter Property="FontFamily" Value="Arial Rounded MT Bold" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CellBlock, Mode=OneTime}" Value="True">
+                                                        <Setter Property="IsEnabled" Value="False" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </CheckBox.Style>
+                                    </CheckBox>
+
+
+
+                                </Grid>
+
+                                <Grid x:Name="scndLine" Grid.Column="0" Grid.Row="1">
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="6*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <!--נוזל בצנצנת-->
+
+
+
+                                    <Border x:Name="nozelBorder" Grid.Row="1" Grid.Column="0"
+                             Width="auto" Style="{StaticResource SidePanelBorderInner}"
+                             Margin="3" Visibility="Hidden">
+                                        <Grid x:Name="SpNst"  Margin="3" >
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition  Width="Auto"/>
+                                                <ColumnDefinition  Width="Auto"/>
+                                                <ColumnDefinition  Width="Auto"/>
+                                                <ColumnDefinition  Width="Auto"/>
+                                                <ColumnDefinition  Width="Auto"/>
+                                                <ColumnDefinition  Width="Auto"/>
+                                                <ColumnDefinition  Width="Auto"/>
+                                                <ColumnDefinition  Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0"  Style="{StaticResource intb}" Text="צבע"/>
+                                            <ComboBox  x:Name="cmbColor"  Grid.Column="1" Style="{StaticResource cbInner}" 
+                                            SelectedValue="{Binding Color}"  Width="200"  SelectedValuePath="PHRASE_NAME" 
+                                            DisplayMemberPath="PHRASE_DESCRIPTION" ItemsSource="{Binding ListColor, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"/>
+
+
+                                            <TextBlock Grid.Column="2"  Style="{StaticResource intb}"  Text="כמות סמק"/>
+
+                                            <xctk:IntegerUpDown x:Name="udSamak"   Grid.Column="3"   Value="{Binding Volume}" Minimum="0" />
+
+
+                                            <TextBlock Grid.Column="4"  Style="{StaticResource intb}" Text="סוג הטיפול"  />
+
+                                            <ComboBox x:Name="cmbNS" Grid.Column="5" SelectionChanged="CmbCytoSlideType_OnSelectionChanged" 
+                                         Style="{StaticResource cbInner}"  SelectedValue="{Binding NextStep}" SelectedValuePath="PHRASE_NAME"
+                                           DisplayMemberPath="PHRASE_DESCRIPTION" ItemsSource="{Binding ListNextStep, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"/>
+
+
+                                        </Grid>
+                                    </Border>
+
+                                    <StackPanel Orientation="Horizontal"  Grid.Column="1" >
+                                        <TextBlock Text="הערה" Style="{StaticResource intb}"  />
+                                        <TextBox  x:Name="txtMark" AcceptsReturn="True"  
+                               Text="{Binding Mark}" MinWidth="333"  />
+
+                                    </StackPanel>
+
+                                </Grid>
+                                <ScrollViewer ScrollViewer.CanContentScroll="False" VerticalScrollBarVisibility="Auto" Grid.Column="1" Grid.RowSpan="2" >
+
+                                    <ListBox x:Name="LbColors"  ItemsSource="{Binding SlidesColor}" Width="300" Height="100">
+
+                                        <ListBox.ItemTemplate>
+
+                                            <DataTemplate >
+                                                <StackPanel Orientation="Horizontal" Width="auto">
+                                                    <TextBlock Text="סוג הצביעה" FontSize="20"/>
+                                                    <TextBox IsEnabled="False" Width="140"  FontSize="20" Text="{Binding ColorName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+
+                                        </ListBox.ItemTemplate>
+
+
+                                    </ListBox>
+                                </ScrollViewer>
+
+                            </Grid>
+
+                        </Border>
+                        <DataTemplate.Triggers>
+                            <Trigger Property="ListBoxItem.IsSelected" Value="True">
+                                <Setter TargetName="mg"  Property="Background" Value="MediumPurple"/>
+                                <Setter TargetName="mg"  Property="TextElement.Foreground" Value="White"/>
+                            </Trigger>
+
+                            <Trigger SourceName="cmbCytoSlideType" Property="Text" Value="נוזל בצנצנת">
+                                <Setter TargetName="nozelBorder" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="chkIsCellBlock" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+
+                </ListBox.ItemTemplate>
+
+            </ListBox>
+
+            <WindowsFormsHost Grid.Row="4" Grid.ColumnSpan="11" x:Name="winformsHostMacro" Margin="20,0,20,2"/>
+
+
+
+
+
+        </Grid>
+
+    </Grid>
+
+</UserControl>

@@ -61,9 +61,6 @@ namespace CytologyMacro_V2Pages
 
         private bool hasCellBlock = false;
         public SDG CurrentSdg { get; set; }
-        public SDG_DETAILS currentSdg_details { get; private set; }
-
-        private SAMPLE currentSample;
 
         private RTF_Manger _rtfManager;
 
@@ -238,6 +235,12 @@ namespace CytologyMacro_V2Pages
         {
             var cytoMacroTxtResult = GetCytoMacroTxtResult(CurrentSdg);
 
+            if(GetCytoMacroTemplate(CurrentSdg) == richTextMacro.GetOriginalText())
+            {
+                cytoMacroTxtResult.STATUS = "C";
+                return;
+            }
+
             var rtfResult = dal.GetAll<RTF_RESULT>().FirstOrDefault(x => x.RTF_RESULT_ID == resId);
 
             string rtfFromRichText = richTextMacro.GetRtf();
@@ -291,67 +294,64 @@ namespace CytologyMacro_V2Pages
 
             if (currentSdgResultMacroTextRes == null) return;
 
-            richTextMacro.AppendText(s);
+            if (currentSdgResultMacroTextRes.)
+            {
+                richTextMacro.AppendText(s);
+            }
+            else
+            {
+                var sdgDiagnosticResults = (from diag in dal.FindBy<RESULT>(x => x.TEST.ALIQUOT.SAMPLE.SDG_ID == CurrentSdg.SDG_ID)
+                                            where diag.TEST.STATUS != "X"
+                                            select diag);
 
-            //removed caouse unnecessary.
-            //if (currentSdgResultMacroTextRes.FORMATTED_RESULT == null || currentSdgResultMacroTextRes.FORMATTED_RESULT == "")
-            //{
-            //    //richTextMacro.AppendText(s);
-            //}
-            //else
-            //{
-                //var sdgDiagnosticResults = (from diag in dal.FindBy<RESULT>(x => x.TEST.ALIQUOT.SAMPLE.SDG_ID == CurrentSdg.SDG_ID)
-                //            where diag.TEST.STATUS != "X"
-                //            select diag);
+                sdgDiagnosticResults.Foreach(x => dal.ReloadEntity(x));
 
-                //sdgDiagnosticResults.Foreach(x=> dal.ReloadEntity(x));
-
-                //var currentResults = (from rl in sdgDiagnosticResults
-                //                      select new WrapperRtf()
-                //                      {
-                //                          Result_ = rl,
-                //                          Name = rl.NAME,
-                //                          ResultId = rl.RESULT_ID,
-                //                          TestName = rl.TEST.NAME
-                //                      }).ToList();
+                var currentResults = (from rl in sdgDiagnosticResults
+                                      select new WrapperRtf()
+                                      {
+                                          Result_ = rl,
+                                          Name = rl.NAME,
+                                          ResultId = rl.RESULT_ID,
+                                          TestName = rl.TEST.NAME
+                                      }).ToList();
 
 
-                ////Gets current results id
-                //var ids = currentResults.Select(x => x.ResultId);
+                //Gets current results id
+                var ids = currentResults.Select(x => x.ResultId);
 
-                ////Gets results with RTF
-                //var resultsHaveRtf = from res in dal.FindBy<RTF_RESULT>(x => ids.Contains(x.RTF_RESULT_ID)) select res;
+                //Gets results with RTF
+                var resultsHaveRtf = from res in dal.FindBy<RTF_RESULT>(x => ids.Contains(x.RTF_RESULT_ID)) select res;
 
 
-                ////LOADS RTF TO LIST
-                //foreach (RTF_RESULT rtfResult in resultsHaveRtf)
-                //{
-                //    dal.ReloadEntity(rtfResult);
-                //    var rr = currentResults.FirstOrDefault(x => x.ResultId == rtfResult.RTF_RESULT_ID);
-                //    if (rr != null)
-                //    {
-                //        rr.RtfText = rtfResult.RTF_TEXT;
-                //    }
-                //}
+                //LOADS RTF TO LIST
+                foreach (RTF_RESULT rtfResult in resultsHaveRtf)
+                {
+                    dal.ReloadEntity(rtfResult);
+                    var rr = currentResults.FirstOrDefault(x => x.ResultId == rtfResult.RTF_RESULT_ID);
+                    if (rr != null)
+                    {
+                        rr.RtfText = rtfResult.RTF_TEXT;
+                    }
+                }
 
-                //_result2RichText = new Dictionary<string, RichSpellCtrl>
-                //{
-                //    { "Cytology Macro Text", richTextMacro },
-                //};
+                _result2RichText = new Dictionary<string, RichSpellCtrl>
+                {
+                    { "Cytology Macro Text", richTextMacro },
+                };
 
-                ////Sets data into rich text
-                //foreach (KeyValuePair<string, RichSpellCtrl> result2RichTextHi in _result2RichText)
-                //{
+                //Sets data into rich text
+                foreach (KeyValuePair<string, RichSpellCtrl> result2RichTextHi in _result2RichText)
+                {
 
-                //    var res = currentResults.FirstOrDefault(x => x.Name == result2RichTextHi.Key);
-                //    if (res != null && res.RtfText != null)
-                //    {
-                //        result2RichTextHi.Value.SetRtf(res.RtfText);
-                //        result2RichTextHi.Value.Focus();
-                //    }
+                    var res = currentResults.FirstOrDefault(x => x.Name == result2RichTextHi.Key);
+                    if (res != null && res.RtfText != null)
+                    {
+                        result2RichTextHi.Value.SetRtf(res.RtfText);
+                        result2RichTextHi.Value.Focus();
+                    }
 
-                //}
-            //}
+                }
+            }
 
 
         }
@@ -410,11 +410,11 @@ namespace CytologyMacro_V2Pages
                 samplesNum.ValueChanged += NumSamplesdd_OnValueChanged;
 
 
-                var reqDate = currentSdg_details.DATE_HAFNAYA;
+                var reqDate = CurrentSdg.SDG_USER.U_REQUEST_DATE;
                 dtRequestDate.Value = reqDate;
 
 
-                var sdg_operatorID = currentSdg_details.U_PATHOLOG;
+                var sdg_operatorID = CurrentSdg.SDG_USER.U_PATHOLOG;
                 cmpPatholog.SelectedValue = sdg_operatorID != null ? sdg_operatorID : null;
 
                 CytoDetails smp;
@@ -490,6 +490,7 @@ namespace CytologyMacro_V2Pages
                         }
                     case "txtBoxForSample_nbr":
                         {
+
                             if (ValidSDG(txtBoxForSDG_nbr.Text, txtBoxForSample_nbr.Text))
                             {
                                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -546,8 +547,6 @@ namespace CytologyMacro_V2Pages
                 validSDG_msg = "לא נמצאה צנצנת מתאימה בדרישה";
                 return false;
             }
-
-            currentSdg_details = dal.FindBy<SDG_DETAILS>(x => x.SDG_ID == CurrentSdg.SDG_ID).FirstOrDefault();
 
 
             return true;

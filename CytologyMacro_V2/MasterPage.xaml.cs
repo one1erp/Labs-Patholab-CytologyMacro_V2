@@ -235,7 +235,10 @@ namespace CytologyMacro_V2Pages
         {
             var cytoMacroTxtResult = GetCytoMacroTxtResult(CurrentSdg);
 
-            if(GetCytoMacroTemplate(CurrentSdg) == richTextMacro.GetOriginalText())
+            var a = GetCytoMacroTemplate(CurrentSdg);
+            var b = richTextMacro.GetOriginalText();
+
+            if (GetCytoMacroTemplate(CurrentSdg) == richTextMacro.GetOriginalText())
             {
                 cytoMacroTxtResult.STATUS = "C";
                 return;
@@ -292,69 +295,74 @@ namespace CytologyMacro_V2Pages
 
             var currentSdgResultMacroTextRes = GetCytoMacroTxtResult(CurrentSdg);
 
-            if (currentSdgResultMacroTextRes == null) return;
-
-            if (currentSdgResultMacroTextRes.)
-            {
-                richTextMacro.AppendText(s);
-            }
-            else
-            {
-                var sdgDiagnosticResults = (from diag in dal.FindBy<RESULT>(x => x.TEST.ALIQUOT.SAMPLE.SDG_ID == CurrentSdg.SDG_ID)
-                                            where diag.TEST.STATUS != "X"
-                                            select diag);
-
-                sdgDiagnosticResults.Foreach(x => dal.ReloadEntity(x));
-
-                var currentResults = (from rl in sdgDiagnosticResults
-                                      select new WrapperRtf()
-                                      {
-                                          Result_ = rl,
-                                          Name = rl.NAME,
-                                          ResultId = rl.RESULT_ID,
-                                          TestName = rl.TEST.NAME
-                                      }).ToList();
-
-
-                //Gets current results id
-                var ids = currentResults.Select(x => x.ResultId);
-
-                //Gets results with RTF
-                var resultsHaveRtf = from res in dal.FindBy<RTF_RESULT>(x => ids.Contains(x.RTF_RESULT_ID)) select res;
-
-
-                //LOADS RTF TO LIST
-                foreach (RTF_RESULT rtfResult in resultsHaveRtf)
+            if (currentSdgResultMacroTextRes != null)
+                if (currentSdgResultMacroTextRes.FORMATTED_RESULT == null || currentSdgResultMacroTextRes.FORMATTED_RESULT == "")
                 {
-                    dal.ReloadEntity(rtfResult);
-                    var rr = currentResults.FirstOrDefault(x => x.ResultId == rtfResult.RTF_RESULT_ID);
-                    if (rr != null)
-                    {
-                        rr.RtfText = rtfResult.RTF_TEXT;
-                    }
+                    richTextMacro.AppendText(s);
                 }
+                else
+                {
+                    var res2 = (from diag in dal.FindBy<RESULT>(x => x.TEST.ALIQUOT.SAMPLE.SDG_ID == CurrentSdg.SDG_ID)
+                                where diag.TEST.STATUS != "X"
 
-                _result2RichText = new Dictionary<string, RichSpellCtrl>
+                                select diag);
+
+                    foreach (var item in res2)
+                    {
+                        dal.ReloadEntity(item);
+                    }
+
+                    var currentResults = (from rl in res2
+                                          select new WrapperRtf()
+                                          {
+                                              Result_ = rl,
+                                              Name = rl.NAME,
+                                              ResultId = rl.RESULT_ID,
+                                              TestName = rl.TEST.NAME
+                                          }).ToList();
+
+
+                    //Gets current results id
+                    var ids = currentResults.Select(x => x.ResultId);
+
+                    //Gets results with RTF
+                    var resultsHaveRtf = from res in dal.FindBy<RTF_RESULT>(x => ids.Contains(x.RTF_RESULT_ID)) select res;
+
+
+                    //LOADS RTF TO LIST
+                    foreach (RTF_RESULT rtfResult in resultsHaveRtf)
+                    {
+                        dal.ReloadEntity(rtfResult);
+                        var rr = currentResults.FirstOrDefault(x => x.ResultId == rtfResult.RTF_RESULT_ID);
+                        if (rr != null)
+                        {
+                            rr.RtfText = rtfResult.RTF_TEXT;
+                        }
+                    }
+
+                    _result2RichText = new Dictionary<string, RichSpellCtrl>
                 {
                     { "Cytology Macro Text", richTextMacro },
                 };
 
-                //Sets data into rich text
-                foreach (KeyValuePair<string, RichSpellCtrl> result2RichTextHi in _result2RichText)
-                {
-
-                    var res = currentResults.FirstOrDefault(x => x.Name == result2RichTextHi.Key);
-                    if (res != null && res.RtfText != null)
+                    //Sets data into rich text
+                    foreach (KeyValuePair<string, RichSpellCtrl> result2RichTextHi in _result2RichText)
                     {
-                        result2RichTextHi.Value.SetRtf(res.RtfText);
-                        result2RichTextHi.Value.Focus();
+
+                        var res = currentResults.FirstOrDefault(x => x.Name == result2RichTextHi.Key);
+                        if (res != null && res.RtfText != null)
+                        {
+                            result2RichTextHi.Value.SetRtf(res.RtfText);
+                            result2RichTextHi.Value.Focus();
+                        }
+
                     }
-
                 }
-            }
 
 
-        }
+        
+
+    }
 
         #endregion
 

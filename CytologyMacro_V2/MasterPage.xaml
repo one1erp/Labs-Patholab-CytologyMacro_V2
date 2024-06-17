@@ -159,7 +159,7 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="AliceBlue" Margin="0"  FlowDirection="RightToLeft" x:Name="screenHeader" Height="35">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition  Width="50" />
+                <ColumnDefinition  Width="auto" />
                 <ColumnDefinition/>
                 <ColumnDefinition  Width="auto"/>
                 <ColumnDefinition  Width="auto"/>
@@ -168,17 +168,34 @@
             </Grid.ColumnDefinitions>
 
             <!--exit btn-->
-            <Border BorderBrush="Gray" BorderThickness="0,0,1,0" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN">
-                <Grid x:Name="exitBtn" Grid.Column="0" Background="#FFF0F8FF" ToolTip="יציאה" MouseLeftButtonDown="HeaderBtnsClick" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN">
-                    <Label Content="X" FontWeight="Bold" FontFamily="arial bold" HorizontalContentAlignment="Center" FontSize="20" VerticalContentAlignment="Center"/>
+           
+                <Grid Grid.Column="5" x:Name="exitBtn" Background="#FFF0F8FF" MouseLeftButtonDown="HeaderBtnsClick" ToolTip="יציאה" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN"  >
+                    <Grid  HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="Red"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Label Height="30" Width="30" Content="x" FontSize="15" VerticalContentAlignment="Center"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0" HorizontalContentAlignment="Center" />
+                    </Grid>
                 </Grid>
-            </Border>
+
+            <!--<Button ToolTip="יציאה" MouseLeftButtonDown="HeaderBtnsClick" Grid.Column="5" x:Name="exitBtn" Content="x" Width="20" Height="20"  FontSize="15" VerticalContentAlignment="Top" />-->
+            <!--<Border  BorderBrush="Gray" BorderThickness="0,0,1,0" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN">
+                <Grid   Background="#FFF0F8FF" ToolTip="יציאה" MouseLeftButtonDown="HeaderBtnsClick" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN">
+                    <Label  FontWeight="Bold"  HorizontalContentAlignment="Center" FontSize="15" VerticalContentAlignment="Center"/>
+                </Grid>
+            </Border>-->
 
 
 
             <!--template loading btn-->
             <Border BorderBrush="Gray" BorderThickness="1,0,1,0" Grid.Column="2">
-                <Grid x:Name="templateLoadingBtn" Background="#FFF0F8FF" ToolTip="טעינת טמפלייט" MouseLeftButtonDown="HeaderBtnsClick"  >
+                <Grid IsEnabled="False" x:Name="templateLoadingBtn" Background="#FFF0F8FF" ToolTip="טעינת טמפלייט" MouseLeftButtonDown="HeaderBtnsClick"  >
                     <Grid>
                         <Grid.Style>
                             <Style TargetType="Grid">
@@ -189,7 +206,7 @@
                                 </Style.Triggers>
                             </Style>
                         </Grid.Style>
-                        <Label Content="טמפלייט" Margin="0,-6,0,0"  />
+                        <Label Content="Template" Margin="0,-6,0,0"/>
                     </Grid>
                 </Grid>
             </Border>
@@ -230,7 +247,7 @@
                 </Grid>
             </Border>
             <!--screen header lbl-->
-            <Label  Grid.Column="5" Content="מאקרו ציטולוגיה" FontFamily="Arial Rounded MT Bold" FontSize="20" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN"/>
+            <Label  Grid.Column="0" Content="מאקרו ציטולוגיה" FontFamily="Arial Rounded MT Bold" FontSize="20" Margin="0,0,455,0" VerticalAlignment="Stretch" Width="NaN" Grid.ColumnSpan="2"/>
 
 
         </Grid>

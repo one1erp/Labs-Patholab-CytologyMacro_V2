@@ -236,7 +236,7 @@ namespace CytologyMacro_V2Pages
 
         internal void SaveTxtFromRichTextToSdgResult()
         {
-            var cytoMacroTxtResult = GetCytoMacroTxtResult(CurrentSdg);
+            var currentResult = GetCytoMacroTxtResult(CurrentSdg);
 
             var rtfResult = dal.GetAll<RTF_RESULT>().FirstOrDefault(x => x.RTF_RESULT_ID == resId);
 
@@ -260,11 +260,14 @@ namespace CytologyMacro_V2Pages
             string truncatedText = textFromRichText.Length > 4000 ? textFromRichText.Substring(0, 4000) : textFromRichText;
 
             // Update properties of currentSdgResultMacroTextRes
-            cytoMacroTxtResult.ORIGINAL_RESULT = truncatedText;
-            cytoMacroTxtResult.FORMATTED_RESULT = truncatedText;
+            currentResult.ORIGINAL_RESULT = truncatedText;
+            currentResult.FORMATTED_RESULT = truncatedText;
 
             // Update the status
-            cytoMacroTxtResult.STATUS = "C";
+            currentResult.STATUS = "C";
+
+            dal.InsertToSdgLog(CurrentSdg.SDG_ID, "CM.UPDATE_MACRO", (long)_ntlsCon.GetSessionId(), $"MACRO UPDATED BY {_ntlsUser.GetOperatorName()}");
+            dal.SaveChanges();
         }
 
 
@@ -281,77 +284,69 @@ namespace CytologyMacro_V2Pages
             return res;
         }
 
-        internal void LoadResults(SDG sdg)
+        internal void LoadResultsToRichTxt(bool OverridingExistingText)
         {
             richTextMacro.ClearText();
 
-            string s = GetCytoMacroTemplate(sdg);
+            if (OverridingExistingText)
+            {
+                string s = GetCytoMacroTemplate(CurrentSdg);
+                richTextMacro.AppendText(s);
+            }
+            else
+            {
+                var sdgDiagnosticResults = (from diag in dal.FindBy<RESULT>(x => x.TEST.ALIQUOT.SAMPLE.SDG_ID == CurrentSdg.SDG_ID)
+                                            where diag.TEST.STATUS != "X"
+                                            select diag);
 
-            var currentSdgResultMacroTextRes = GetCytoMacroTxtResult(CurrentSdg);
+                sdgDiagnosticResults.Foreach(x => dal.ReloadEntity(x));
 
-            if (currentSdgResultMacroTextRes == null) return;
-
-            richTextMacro.AppendText(s);
-
-            //removed caouse unnecessary.
-            //if (currentSdgResultMacroTextRes.FORMATTED_RESULT == null || currentSdgResultMacroTextRes.FORMATTED_RESULT == "")
-            //{
-            //    //richTextMacro.AppendText(s);
-            //}
-            //else
-            //{
-                //var sdgDiagnosticResults = (from diag in dal.FindBy<RESULT>(x => x.TEST.ALIQUOT.SAMPLE.SDG_ID == CurrentSdg.SDG_ID)
-                //            where diag.TEST.STATUS != "X"
-                //            select diag);
-
-                //sdgDiagnosticResults.Foreach(x=> dal.ReloadEntity(x));
-
-                //var currentResults = (from rl in sdgDiagnosticResults
-                //                      select new WrapperRtf()
-                //                      {
-                //                          Result_ = rl,
-                //                          Name = rl.NAME,
-                //                          ResultId = rl.RESULT_ID,
-                //                          TestName = rl.TEST.NAME
-                //                      }).ToList();
+                var currentResults = (from rl in sdgDiagnosticResults
+                                      select new WrapperRtf()
+                                      {
+                                          Result_ = rl,
+                                          Name = rl.NAME,
+                                          ResultId = rl.RESULT_ID,
+                                          TestName = rl.TEST.NAME
+                                      }).ToList();
 
 
-                ////Gets current results id
-                //var ids = currentResults.Select(x => x.ResultId);
+                //Gets current results id
+                var ids = currentResults.Select(x => x.ResultId);
 
-                ////Gets results with RTF
-                //var resultsHaveRtf = from res in dal.FindBy<RTF_RESULT>(x => ids.Contains(x.RTF_RESULT_ID)) select res;
+                //Gets results with RTF
+                var resultsHaveRtf = from res in dal.FindBy<RTF_RESULT>(x => ids.Contains(x.RTF_RESULT_ID)) select res;
 
 
-                ////LOADS RTF TO LIST
-                //foreach (RTF_RESULT rtfResult in resultsHaveRtf)
-                //{
-                //    dal.ReloadEntity(rtfResult);
-                //    var rr = currentResults.FirstOrDefault(x => x.ResultId == rtfResult.RTF_RESULT_ID);
-                //    if (rr != null)
-                //    {
-                //        rr.RtfText = rtfResult.RTF_TEXT;
-                //    }
-                //}
+                //LOADS RTF TO LIST
+                foreach (RTF_RESULT rtfResult in resultsHaveRtf)
+                {
+                    dal.ReloadEntity(rtfResult);
+                    var rr = currentResults.FirstOrDefault(x => x.ResultId == rtfResult.RTF_RESULT_ID);
+                    if (rr != null)
+                    {
+                        rr.RtfText = rtfResult.RTF_TEXT;
+                    }
+                }
 
-                //_result2RichText = new Dictionary<string, RichSpellCtrl>
-                //{
-                //    { "Cytology Macro Text", richTextMacro },
-                //};
+                _result2RichText = new Dictionary<string, RichSpellCtrl>
+                    {
+                        { "Cytology Macro Text", richTextMacro },
+                    };
 
-                ////Sets data into rich text
-                //foreach (KeyValuePair<string, RichSpellCtrl> result2RichTextHi in _result2RichText)
-                //{
+                //Sets data into rich text
+                foreach (KeyValuePair<string, RichSpellCtrl> result2RichTextHi in _result2RichText)
+                {
 
-                //    var res = currentResults.FirstOrDefault(x => x.Name == result2RichTextHi.Key);
-                //    if (res != null && res.RtfText != null)
-                //    {
-                //        result2RichTextHi.Value.SetRtf(res.RtfText);
-                //        result2RichTextHi.Value.Focus();
-                //    }
+                    var res = currentResults.FirstOrDefault(x => x.Name == result2RichTextHi.Key);
+                    if (res != null && res.RtfText != null)
+                    {
+                        result2RichTextHi.Value.SetRtf(res.RtfText);
+                        result2RichTextHi.Value.Focus();
+                    }
 
-                //}
-            //}
+                }
+            }
 
 
         }
@@ -364,6 +359,8 @@ namespace CytologyMacro_V2Pages
         private string validSDG_msg;
         private bool flag;
         private bool isFirstTime = true;
+        private List<long> newCellBlocks = new List<long>();
+        private string newSlide_name;
 
         private void StartFlashingAnimation()
         {
@@ -394,10 +391,13 @@ namespace CytologyMacro_V2Pages
             }
         }
 
-        public void DisplayRequestDetails()
+        public void DisplayRequestDetails(SDG currentSdg)
         {
             try
             {
+                CleanScreen();
+
+                CurrentSdg = currentSdg;
 
                 lbl_sdgName.Content = $"מספר מקרה: {CurrentSdg.SDG_USER.U_PATHOLAB_NUMBER}";
 
@@ -410,11 +410,11 @@ namespace CytologyMacro_V2Pages
                 samplesNum.ValueChanged += NumSamplesdd_OnValueChanged;
 
 
-                var reqDate = currentSdg_details.DATE_HAFNAYA;
+                var reqDate = currentSdg.SDG_USER.U_REQUEST_DATE;
                 dtRequestDate.Value = reqDate;
 
 
-                var sdg_operatorID = currentSdg_details.U_PATHOLOG;
+                var sdg_operatorID = currentSdg.SDG_USER.U_PATHOLOG;
                 cmpPatholog.SelectedValue = sdg_operatorID != null ? sdg_operatorID : null;
 
                 CytoDetails smp;
@@ -460,10 +460,18 @@ namespace CytologyMacro_V2Pages
 
                 }
 
+                var ab = GetCytoMacroTxtResult(CurrentSdg);
+                if (ab.STATUS != "C")
+                {
+                    StartFlashingAnimation();
+                }
+                else
+                {
+                    LoadResultsToRichTxt(false);
+                    SetBtns(true);
+                }
 
-                templateLoadingBtn.IsEnabled = true;
 
-                StartFlashingAnimation();
 
                 samplesNum.IsEnabled = true;
 
@@ -490,11 +498,14 @@ namespace CytologyMacro_V2Pages
                         }
                     case "txtBoxForSample_nbr":
                         {
-                            if (ValidSDG(txtBoxForSDG_nbr.Text, txtBoxForSample_nbr.Text))
+                            var sdg = ValidSDG(txtBoxForSDG_nbr.Text, txtBoxForSample_nbr.Text);
+                            if (sdg != null)
                             {
                                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                                StartDisplayingSDG();
+                                DisplayRequestDetails(sdg);
+                                templateLoadingBtn.IsEnabled = true;
                                 Mouse.OverrideCursor = null;
+                                txtBoxForSDG_nbr.Focus();
                             }
                             else
                             {
@@ -508,49 +519,50 @@ namespace CytologyMacro_V2Pages
 
         }
 
-        private void StartDisplayingSDG()
-        {
-            DisplayRequestDetails();
-        }
-
-        private bool ValidSDG(string sdg_name, string sample_name)
+        private SDG ValidSDG(string sdg_name, string sample_name)
         {
             if (string.IsNullOrEmpty(sdg_name) || string.IsNullOrEmpty(sample_name))
             {
                 validSDG_msg = "מספרי דרישה וצנצנת חובה";
-                return false;
+                return null;
             }
 
             if (!sample_name.StartsWith(sdg_name))
             {
                 validSDG_msg = "מספרי דרישה וצנצנת לא תואמים";
-                return false;
+                return null;
+
             }
 
             if (!sdg_name.StartsWith("C"))
             {
                 validSDG_msg = "מסך מיועד עבור מקרי ציטולוגיה בלבד";
-                return false;
+                return null;
+
             }
 
             CurrentSdg = dal.FindBy<SDG>(x => x.NAME == sdg_name).FirstOrDefault();
 
+
+            //CurrentSdg = dal.GetAll<SDG>().FirstOrDefault();
+
             if (CurrentSdg == null)
             {
                 validSDG_msg = "לא נמצאה דרישה עם השם המצוין";
-                return false;
+                return null;
+
             }
 
             if (!CurrentSdg.SAMPLEs.Any(x => x.NAME == sample_name))
             {
                 validSDG_msg = "לא נמצאה צנצנת מתאימה בדרישה";
-                return false;
+                return null;
+
             }
 
-            currentSdg_details = dal.FindBy<SDG_DETAILS>(x => x.SDG_ID == CurrentSdg.SDG_ID).FirstOrDefault();
 
 
-            return true;
+            return CurrentSdg;
 
         }
 
@@ -673,11 +685,20 @@ namespace CytologyMacro_V2Pages
             }
         }
 
-        private void SetBtns()
+        private void SetBtns(bool state)
         {
-            authorizeBtn.IsEnabled = !authorizeBtn.IsEnabled;
-            saveBtn.IsEnabled = !saveBtn.IsEnabled;
-            richTextMacro.Enabled = !richTextMacro.Enabled;
+            if (state)
+            {
+                authorizeBtn.IsEnabled = true;
+                saveBtn.IsEnabled = true;
+                richTextMacro.Enabled = true;
+            }
+            else
+            {
+                authorizeBtn.IsEnabled = false;
+                saveBtn.IsEnabled = false;
+                richTextMacro.Enabled = false;
+            }
         }
 
         private void CleanScreen()
@@ -689,7 +710,7 @@ namespace CytologyMacro_V2Pages
             lbl_sdgName.Content = string.Empty;
 
 
-            SetBtns();
+            SetBtns(false);
 
             txtBoxForSDG_nbr.Text = string.Empty;
             txtBoxForSample_nbr.Text = string.Empty;
@@ -710,7 +731,6 @@ namespace CytologyMacro_V2Pages
                 //don't move
                 dal.SaveChanges();
 
-                var createdBy = _ntlsUser.GetOperatorName();
                 int index = 0;
 
                 // if the user added more samples, this will log them to the sdg in db
@@ -723,7 +743,7 @@ namespace CytologyMacro_V2Pages
 
                     if (sampleID != -1)
                     {
-                        dal.InsertToSdgLog(CurrentSdg.SDG_ID, "CM.ADD_SAMPLE", (long)_ntlsCon.GetSessionId(), $"sample added by {createdBy}");
+                        dal.InsertToSdgLog(CurrentSdg.SDG_ID, "CM.ADD_SAMPLE", (long)_ntlsCon.GetSessionId(), $"sample added by {_ntlsUser.GetOperatorName()}");
                         numSamplesAdded++;
                     }
 
@@ -752,7 +772,6 @@ namespace CytologyMacro_V2Pages
 
                 indexesToAddCellBlock.Clear();
                 SaveTxtFromRichTextToSdgResult();
-                dal.InsertToSdgLog(CurrentSdg.SDG_ID, "CM.UPDATE_MACRO", (long)_ntlsCon.GetSessionId(), $"MACRO UPDATED BY {createdBy}");
                 dal.SaveChanges();
                 return true;
             }
@@ -827,7 +846,7 @@ namespace CytologyMacro_V2Pages
 
                 foreach (var aliquot in sampAliquots)
                 {
-                    if (aliquot.ALIQUOT_USER.U_IS_CELL_BLOCK != "T")
+                    if (aliquot.ALIQUOT_USER.U_COLOR_TYPE == null && aliquot.ALIQUOT_USER.U_IS_CELL_BLOCK != "T")
                     {
                         aliquot.ALIQUOT_USER.U_COLOR_TYPE = "Papanicolao";
                     }
@@ -859,20 +878,20 @@ namespace CytologyMacro_V2Pages
                         var aliquots = dal.FindBy<ALIQUOT>(x => x.SAMPLE_ID == sample.SAMPLE_ID);
                         var aliq_cellBlock = aliquots.First(x => x.ALIQUOT_USER.U_IS_CELL_BLOCK == "T");
                         aliq_cellBlock.STATUS = "V";
-                        aliq_cellBlock.ALIQUOT_USER.U_COLOR_TYPE = "HE";
                         dal.Ex_Req_Logic(CurrentSdg.SDG_ID, sample.NAME, ExtraRequestType.C,
                             (long)_ntlsUser.GetOperatorId(), "הוספת CELL BLOCK - מסך מאקרו ציטולוגיה", "");
 
 
                         //assigning name to slide under cell block
                         var aliquotId = dal.FindBy<ALIQUOT>(x => x.SAMPLE_ID == sample.SAMPLE_ID).OrderByDescending(x => x.ALIQUOT_ID).FirstOrDefault().ALIQUOT_ID;
+                        newCellBlocks.Add(aliquotId);   
                         try
                         {
                             OracleConnection _oraCon = dal.GetOracleConnection(_ntlsCon);
 
                             string query = $"select LIMS.GET_CYTO_SLIDE_NAME({aliquotId}) from dual";
 
-                            string newSlide_name = string.Empty;
+                            newSlide_name = string.Empty;
 
                             using (OracleCommand cmd = new OracleCommand(query, _oraCon))
                             {
@@ -887,12 +906,17 @@ namespace CytologyMacro_V2Pages
                                 }
 
                             }
-                            dal.FindBy<ALIQUOT>(x => x.ALIQUOT_ID == aliquotId).FirstOrDefault().NAME = newSlide_name;
+
+                            var cb_slide = dal.FindBy<ALIQUOT>(x => x.ALIQUOT_ID == aliquotId).FirstOrDefault();
+                            cb_slide.NAME = newSlide_name;
+                            cb_slide.ALIQUOT_USER.U_COLOR_TYPE = "HE";
+
                         }
                         catch (Exception ex)
                         {
                             System.Windows.Forms.MessageBox.Show("Error while updating new slide name: " + ex.Message);
                         }
+
 
 
                         dal.InsertToSdgLog(CurrentSdg.SDG_ID, "CM.ADD_CB", (long)_ntlsCon.GetSessionId(), $"CELL BLOCK נוסף לצנצנת: {sample.NAME}");
@@ -950,7 +974,7 @@ namespace CytologyMacro_V2Pages
                 {
                     sample_id = Convert.ToInt64(addSample.GetValueByTagName("SAMPLE_ID"));
                 }
-                catch (Exception ex)
+                catch 
                 {
                     sample_id = -1;
                 }
@@ -973,9 +997,9 @@ namespace CytologyMacro_V2Pages
                     return false;
                 }
 
-                txtBoxForSDG_nbr.Focus();           
+                txtBoxForSDG_nbr.Focus();
                 return UpdateRequest();
-          
+
             }
             catch (Exception ex)
             {
@@ -1151,6 +1175,7 @@ namespace CytologyMacro_V2Pages
 
         private void HeaderBtnsClick(object sender, MouseButtonEventArgs e)
         {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             if (sender is Grid grid)
             {
                 switch (grid.Name)
@@ -1169,7 +1194,7 @@ namespace CytologyMacro_V2Pages
                         {
                             if (SpecialValidation())
                             {
-                                SaveSDG();                          
+                                SaveSDG();
                             };
                             break;
                         }
@@ -1180,13 +1205,33 @@ namespace CytologyMacro_V2Pages
                             {
                                 if (SpecialValidation())
                                 {
-                                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                                    SaveSDG();
-                                    LoadResults(CurrentSdg);
-                                    if(isFirstTime) SetBtns();
-                                    isFirstTime = false;
-                                    StopFlashingAnimation();
-                                    Mouse.OverrideCursor = null;
+                                    var currentSdgMacroResult = GetCytoMacroTxtResult(CurrentSdg);
+                                    if (currentSdgMacroResult != null && currentSdgMacroResult.STATUS == "C")
+                                    {
+                                        var dg = MessageBox.Show("טעינת תבנית מחדש תבטל שינויים שנערכו בטקסט. האם אתה בטוח שברצונך להמשיך?", Constants.MboxCaption, MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                                        if (dg == MessageBoxResult.Yes)
+                                        {
+                                            SaveSDG();
+                                            LoadResultsToRichTxt(true);
+                                        }
+                                        else
+                                        {
+                                            Mouse.OverrideCursor = null;
+                                            return;
+                                        }
+                                    }
+                                    else
+                                    {
+
+                                        SaveSDG();
+                                        LoadResultsToRichTxt(true);
+                                        SaveTxtFromRichTextToSdgResult();
+                                        StopFlashingAnimation();
+                                        SetBtns(true);
+
+
+                                    }
+
                                 };
 
                             }
@@ -1203,20 +1248,38 @@ namespace CytologyMacro_V2Pages
                             {
                                 SaveSDG();
                                 PrintInitialLetterCyto(CurrentSdg);
+                                PrintCellBlock(CurrentSdg);
                                 CleanScreen();
-                                SetBtns();
                             };
                             break;
                         }
 
                 }
+                Mouse.OverrideCursor = null;
             }
 
-            
+
         }
 
+        private void PrintCellBlock(SDG currentSdg)
+        {
+            var CellBlockInSdg = currentSdg.SAMPLEs.Select(x => x.ALIQUOTs).ToList()
+                .Select(v => v.Select(x => x.ALIQUOT_USER))
+                .Where(x=>x.FirstOrDefault().U_IS_CELL_BLOCK =="T").Select(x=>x.FirstOrDefault().ALIQUOT_ID);
 
+            var newCellBlockAdded = dal.FindBy<ALIQUOT>(x => newCellBlocks.Contains(x.ALIQUOT_ID)).Select(x => x.ALIQUOT_ID);
 
+            var a = new List<long>();
+            a.AddRange(CellBlockInSdg);
+            a.AddRange(newCellBlockAdded);
+
+            //aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+            //Netanel asked to print new cell block sticker.
+            //1. What entity?
+            //2. What event?
+            //3. At the end of authorizing?
+
+        }
     }
     #endregion
 
